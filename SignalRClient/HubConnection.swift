@@ -70,7 +70,7 @@ public class HubConnection: ConnectionDelegate {
     public func send(method: String, arguments:[Any?], sendDidComplete: @escaping (_ error: Error?) -> Void) {
         logger.log(logLevel: .info, message: "Sending to server side hub method: '\(method)'")
 
-        if !ensureConnectionStarted() {sendDidComplete($0)} {
+        if !ensureConnectionStarted(errorHandler: {sendDidComplete($0)}) {
             return
         }
 
@@ -93,7 +93,7 @@ public class HubConnection: ConnectionDelegate {
     public func invoke<T>(method: String, arguments: [Any?], returnType: T.Type, invocationDidComplete: @escaping (_ result: T?, _ error: Error?) -> Void) {
         logger.log(logLevel: .info, message: "Invoking server side hub method: '\(method)'")
 
-        if !ensureConnectionStarted() {invocationDidComplete(nil, $0)} {
+        if !ensureConnectionStarted(errorHandler: {invocationDidComplete(nil, $0)}) {
             return
         }
 
@@ -105,7 +105,7 @@ public class HubConnection: ConnectionDelegate {
     public func stream<T>(method: String, arguments: [Any?], itemType: T.Type, streamItemReceived: @escaping (_ item: T?) -> Void, invocationDidComplete: @escaping (_ error: Error?) -> Void) -> StreamHandle {
         logger.log(logLevel: .info, message: "Invoking server side streaming hub method: '\(method)'")
 
-        if !ensureConnectionStarted() {invocationDidComplete($0)} {
+        if !ensureConnectionStarted(errorHandler: {invocationDidComplete($0)}) {
             return StreamHandle(invocationId: "")
         }
 
@@ -119,7 +119,7 @@ public class HubConnection: ConnectionDelegate {
     public func cancelStreamInvocation(streamHandle: StreamHandle, cancelDidFail: @escaping (_ error: Error) -> Void) {
         logger.log(logLevel: .info, message: "Cancelling server side streaming hub method")
 
-        if !ensureConnectionStarted() {cancelDidFail($0)} {
+        if !ensureConnectionStarted(errorHandler: {cancelDidFail($0)}) {
             return
         }
 

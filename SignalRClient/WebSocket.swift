@@ -383,7 +383,6 @@ private func zerror(_ res : CInt) -> Error? {
 }
 
 private struct z_stream {
-    var next_in : UnsafePointer<UInt8>? = nil
     var avail_in : CUnsignedInt = 0
     var total_in : CUnsignedLong = 0
 
@@ -431,13 +430,11 @@ private class Inflater {
         for i in 0 ..< 2{
             if i == 0 {
                 strm.avail_in = CUnsignedInt(length)
-                strm.next_in = UnsafePointer<UInt8>(bufin)
             } else {
                 if !final {
                     break
                 }
                 strm.avail_in = CUnsignedInt(inflateEnd.count)
-                strm.next_in = UnsafePointer<UInt8>(inflateEnd)
             }
             while true {
                 strm.avail_out = CUnsignedInt(bufsiz)
@@ -1050,7 +1047,7 @@ private class InnerWebSocket: Hashable {
         for i in 0 ..< 4 {
             keyb[i] = arc4random()
         }
-        let rkey = Data(bytes: UnsafePointer(keyb), count: 16).base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
+        let rkey = Data(bytes: keyb, count: 16).base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
         reqs += "Sec-WebSocket-Key: \(rkey)\r\n"
         reqs += "\r\n"
         var header = [UInt8]()
